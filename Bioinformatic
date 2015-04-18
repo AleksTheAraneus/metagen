@@ -1,0 +1,66 @@
+1. fastq -> fasta
+cat FILEIN | perl -e '$i=0;while(<>){if(/^\@/&&$i==0){s/^\@/\>/;print;}elsif($i==1){s/\./N/g;print;$i=-3}$i++;}' > FILEOUT
+
+2. install libgtextutils and fastx: fastq to fasta and quality filtering
+cd /root
+curl -O http://hannonlab.cshl.edu/fastx_toolkit/libgtextutils-0.6.1.tar.bz2
+tar xjf libgtextutils-0.6.1.tar.bz2
+cd libgtextutils-0.6.1/
+sudo ./configure && sudo make && sudo make install
+cd ..
+
+curl -O http://hannonlab.cshl.edu/fastx_toolkit/fastx_toolkit-0.0.13.2.tar.bz2
+tar xjf fastx_toolkit-0.0.13.2.tar.bz2
+cd fastx_toolkit-0.0.13.2/
+./configure && make && make install
+cd ..
+
+FASTQ TO FASTA
+fastq_to_fasta -i small_shuffled.fastq -Q 33 -o small.shuffled.fasta
+
+QUALITY STATS
+fastx_quality_stats -i ~/Desktop/short.fastq -Q 33 -o ~/Desktop/stats.txt # -Q convert Sanger quality to Solexa
+
+QUALITY PLOT
+fastq_quality_boxplot_graph.sh -i ~/Desktop/stats.txt -o ~/Desktop/quality.png -t "Title"
+
+x. FragGeneScan
+./run_FragGeneScan.pl -genome=./example/short.fasta -out=./example/short -complete=0  -train=illumina_10
+
+
+x. Velvet
+# at least 51 k-mer length
+
+?? perl shuffleSequences_fastq.pl M1-D7_S29_L001_R1_001.fastq M1-D4_S29_L001_R2_001 M1-D7_shuffled.fastq
+
+./velveth directory hash_length {[-file_format][-read_type][-separate|-interleaved] filename1 [filename2 ...]} {...} [options]
+				  -fmtAuto		    (read two files for paired ends)
+							    (-interl: in one file)
+
+# fastq.gz -short -separate /media/aleksandra/Data/sciences/_BIOTECHNOLOGIA/mgr/M1-D4_S20_L001_R1_001.fastq.gz ~/media/aleksandra/Data/sciences/_BIOTECHNOLOGIA/mgrM1-D4_S20_L001_R2_001.fastq.gz
+
+velveth ~/Desktop 31 -fasta -short -interleaved ~/media/aleksandra/Data/sciences/_BIOTECHNOLOGIA/mgr/small_shuffled.fasta    # ~?
+
+velvetg /media/aleksandra/Data/sciences/_BIOTECHNOLOGIA/mgr -exp_cov auto [-ins_length 100]
+
+x. MetaVelvet 
+#increase memory allocated!?
+#very long!
+
+Copy the two executable files to /usr/bin or a directory you like to install.
+    ~/MetaVelvet-v1.1.01$ cp meta-velvetg /usr/bin/
+
+meta-velvetg outdir
+
+
+
+
+
+
+
+
+
+
+
+
+
